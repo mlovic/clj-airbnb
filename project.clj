@@ -7,7 +7,9 @@
                  [org.clojure/core.async "0.2.374"]
                  [clj-http "2.2.0"]
                  [cheshire "5.6.1"]
-                 [jarohen/chime "0.1.9"]
+                 [ring "1.5.0"]
+                 [clj-time "0.12.0"]
+                 [com.draines/postal "2.0.0"]
                  [com.novemberain/monger "3.0.1"]]
   :main ^:skip-aot clj-airbnb.core
   :target-path "target/%s"

@@ -18,6 +18,7 @@
   ;; TODO set starting month dynamically
   (try
     (->
+      ;; TODO increment count. fight now it's 6 for convenince
       (str "https://www.airbnb.com/api/v2/calendar_months?key=d306zoyjsyarp7ifhu67rjxn52tv0t20&currency=EUR&locale=en&listing_id=" id "=&month=6&year=2016&count=6&_format=with_conditions"  )
       (client/get)
       (:body);; handle exception here
