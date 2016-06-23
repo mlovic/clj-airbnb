@@ -3,9 +3,9 @@
 
 (def test-id 8725004)
 
-(def response (request-calendar test-id))
+;(def response (request-calendar test-id))
 
-(def cal (get-days response))
+;(def cal (get-days response))
 
-(def old (-> @clj-airbnb.store/listings (first) (:calendar)))
-(def nu (-> @clj-airbnb.store/listings (second) (:calendar)))
+;(def old (-> @clj-airbnb.store/listings (first) (:calendar)))
+;(def nu (-> @clj-airbnb.store/listings (second) (:calendar)))

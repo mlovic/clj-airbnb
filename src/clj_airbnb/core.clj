@@ -14,6 +14,12 @@
              [clj-airbnb.schedule :as sched])
   (:gen-class))
 
+#_(Thread/setDefaultUncaughtExceptionHandler
+  (reify
+    Thread$UncaughtExceptionHandler
+    (uncaughtException [this thread throwable]
+      (errorf throwable "Uncaught exception %s on thread %s" throwable thread))))
+
 (defn log-buffer [label in]
   (go
     (let [item (<! in)]
@@ -93,3 +99,6 @@
       (sched/start-scheduling) ; returns out channel of id's to update
       (listen-updates))  ; updates listings and processes changes
   (web/start-server))    ; start web server
+
+(defn -main []
+  (start))

@@ -10,11 +10,14 @@
     (= method :get)
     {:status 200
      :headers {"Content-Type" "text/plain"}
-     :body "true"}
+     :body (str (boolean (alert/get-by-listing-id id)))}
     (= method :post)
+    ;(do)
+    ;(add-listing id)
+    (alert/persist {:freq 60 :id id} 
     {:status 200
      :headers {"Content-Type" "text/plain"}
-     :body (str (boolean (alert/get-by-listing-id id)))}))
+     :body "ok"})))
 
 (def app
   (-> handler wrap-params))

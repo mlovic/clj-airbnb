@@ -22,7 +22,7 @@
     "Get alert from db by its listing id. Return nil if either alert 
     or listing don't exist"
     [id]
-    (assoc (:alert (li/get id) :id id)))
+    (assoc (:alert (li/get id)) :id id))
 
   (defn persist 
     [alert]

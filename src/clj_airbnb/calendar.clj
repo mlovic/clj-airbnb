@@ -1,4 +1,5 @@
-(ns clj-airbnb.calendar)
+(ns clj-airbnb.calendar
+  (:require clojure.set))
 
 (defn available? [day] (:available day))
 
