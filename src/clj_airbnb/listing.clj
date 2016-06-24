@@ -62,17 +62,16 @@
 
 (defn summarize
   [listing]
-  (println 
     (str 
       (:_id listing) ": " (count (:calendar listing)) " days"
       " (" (cal/percent-available (:calendar listing)) " avail.) - "
       (:freq (:alert listing)) " - "
       (format-time (:last_updated listing))
-      )))
+      ))
 
 (defn summarize-all []
-  (dorun (map summarize (get-all)))
-  nil)
+  (doseq [summary (map summarize (get-all))]
+    (println summary)))
 
 ;; TODO override println to not print cal
 ;; need to change to plural
