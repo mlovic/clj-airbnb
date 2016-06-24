@@ -1,15 +1,9 @@
 (ns clj-airbnb.alert
   (:require [monger.core :as monger]
             [monger.collection :as mc]
-            [clj-time.core :as t]
             [monger.operators :refer [$exists $set]]
             [clj-airbnb.listing :as li]
-            [clj-time.periodic :refer [periodic-seq]])
-  (:require [clojure.core.async
-             :as async
-             :refer [>! <! >!! <!! go chan buffer close! thread
-                     alts! alts!! timeout go-loop]])
-  (:require [clj-airbnb.calendar :refer :all])
+            [clj-time.core :as t])
   (:import [com.mongodb MongoOptions ServerAddress]))
  
 ;(defrecord Alert [listing-id freq])
@@ -39,25 +33,3 @@
   (defn add "doc-string" [arg-list]
     ))
       ;(->Alert (:id alert-map) (:freq (:alert alert-map))))))
-
- ;(periodic-seq (t/now)
-               ;(-> 5 t/minutes))
-
-#_(defn test-chimes []
-  (let [chimes (chime-ch [(-> 2 t/seconds t/from-now)
-                          (-> 3 t/seconds t/from-now)])]
-    (go-loop []
-             (when-let [msg (<! chimes)]
-               (println "Chiming at:" msg)
-               (recur)))))
-
-#_(defn start-alert [c alert]
-  (go-loop 
-    []
-    (alt!
-      timeout)))
-
-#_(defn start-monitor [c]
-  (let [alerts (get-all)]
-    (doseq [alert alerts]
-      (start-alert c alert))))
