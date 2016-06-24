@@ -90,7 +90,9 @@
                               :calendar calendar 
                               :last_updated (java.util.Date.)})))))
 
-(defonce alert-queue (atom sched/gen-update-schedule)) ; def'ing only to make monitoring easier
+ ; "Load all alerts from db into queue for first time."
+(defonce alert-queue (atom (sched/gen-update-schedule (alert/get-all)))) ; def'ing only to make monitoring easier
+
 (defn start 
   "Start all processes" 
   []

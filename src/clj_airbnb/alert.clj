@@ -34,7 +34,10 @@
   (defn get-all []
     (for [alert-map (mc/find-maps db "listing" {:alert {$exists true}} 
                                   ["alert" "_id"])]
-      {:id (:_id alert-map) :freq (:freq (:alert alert-map))})))
+      {:id (:_id alert-map) :freq (:freq (:alert alert-map))}))
+  
+  (defn add "doc-string" [arg-list]
+    ))
       ;(->Alert (:id alert-map) (:freq (:alert alert-map))))))
 
  ;(periodic-seq (t/now)

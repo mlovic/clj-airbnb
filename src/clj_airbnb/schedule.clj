@@ -15,9 +15,9 @@
 
 ;; TODO try to keep sched sorted according to next time
 (defn gen-update-schedule
-  "Load all alerts from db into queue for first time."
-  []
-  (into (sorted-map) (map sched-entry (alert/get-all))))
+  "Generate schedule from list of alerts"
+  [alerts]
+  (into (sorted-map) (map sched-entry (alerts))))
 
 (defn add-alert-to-queue 
   "Add an alert to the atom" 
