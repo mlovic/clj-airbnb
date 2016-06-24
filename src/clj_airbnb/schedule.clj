@@ -3,6 +3,9 @@
             [clj-airbnb.alert :as alert]
             [clojure.core.async :refer [>! go chan]]))
 
+;; TODO do i need alert as dependency? maybe just pass in. Who should have
+;; knowledge of alert->entry?
+
 (defn sched-entry 
   "Converts an alert to an alert schedule entry (size 2 vector of key and val)." 
   [alert]

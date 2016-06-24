@@ -1,26 +1,28 @@
 (ns clj-airbnb.web
-  (:require [ring.adapter.jetty :refer :all]
+  (:require [compojure.core :refer :all]
+            [compojure.handler :as handler]
+            [compojure.response :as response]
+            [compojure.route :as route]
+            [ring.adapter.jetty :refer :all]
             [ring.middleware.params :refer :all]
+            [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [ring.util.response :refer :all]
             [clj-airbnb.alert :as alert]))
 
-(defn handler [{{id "id"} :params method :request-method}]
-  (println "id: " id)
-  (cond
-    (= method :get)
-    {:status 200
-     :headers {"Content-Type" "text/plain"}
-     :body (str (boolean (alert/get-by-listing-id id)))}
-    (= method :post)
-    ;(do)
-    ;(add-listing id)
-    (alert/persist {:freq 60 :id id} 
-    {:status 200
-     :headers {"Content-Type" "text/plain"}
-     :body "ok"})))
+(defroutes app-routes
+  (GET "/" [id]
+       (println id)
+       (str (boolean (alert/get-by-listing-id (Integer. id)))))
+
+  (POST "/" [id]
+        "this should add a new alert")
+
+  (GET "/dash" [] 
+      #_(alert/persist {:freq 60 :id id}) 
+       "dash content should go here"))
 
 (def app
-  (-> handler wrap-params))
+  (wrap-defaults app-routes site-defaults))
 
 #_(defonce server (run-jetty #'app {:port 8080 :join? false}))
 

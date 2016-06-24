@@ -8,6 +8,8 @@
                  [clj-http "2.2.0"]
                  [cheshire "5.6.1"]
                  [ring "1.5.0"]
+                 [ring/ring-defaults "0.1.5"]
+                 [compojure "1.4.0"]
                  [clj-time "0.12.0"]
                  [com.draines/postal "2.0.0"]
                  [com.novemberain/monger "3.0.1"]]
