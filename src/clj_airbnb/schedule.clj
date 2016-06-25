@@ -1,6 +1,5 @@
 (ns clj-airbnb.schedule
   (:require [clj-time.core :as t]
-            [clj-airbnb.alert :as alert]
             [clojure.core.async :refer [>! go chan]]))
 
 ;; TODO do i need alert as dependency? maybe just pass in. Who should have
@@ -17,7 +16,7 @@
 (defn gen-update-schedule
   "Generate schedule from list of alerts"
   [alerts]
-  (into (sorted-map) (map sched-entry (alerts))))
+  (into (sorted-map) (map sched-entry alerts)))
 
 (defn add-alert-to-queue 
   "Add an alert to the atom" 
@@ -54,6 +53,3 @@
   ([alert-queue update-queue]
      (call-every-minute #(fire-scheduled alert-queue update-queue))
      update-queue))
-
-;;(reduce #(conj %1 {(:id %2) (dissoc %2 :id)}) {} (alert/gen-alert-queue))))
-

@@ -7,8 +7,10 @@
             [ring.adapter.jetty :refer :all]
             [ring.middleware.params :refer :all]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
+            ;[ring.middleware.logger :as logger]
             [ring.util.response :refer :all]
             [clj-airbnb.alert :as alert]
+            [clj-airbnb.core :as core]
             [clj-airbnb.listing :as li]))
 
 (defroutes app-routes
@@ -17,15 +19,26 @@
        (str (boolean (alert/get-by-listing-id (Integer. id)))))
 
   (POST "/" [id]
-       #_(alert/persist {:freq 60 :id id}) 
-        "this should add a new alert")
+        (core/add-alert  {:freq 60 :id id}))
 
   (GET "/dash" [] 
-    (join "<br>" (map li/summarize (li/get-all))
-       )))
+       (join "<br>" (map li/summarize (li/get-all))
+             )))
+
+(defn wrap-logging [handler]
+  (fn [request]
+    (clojure.pprint/pprint request)
+    (println (str (:request-method request)) " "
+             (str (:uri request))
+             (str (:id (:params request))))
+    (handler request)))
 
 (def app
-  (wrap-defaults app-routes site-defaults))
+  (-> app-routes 
+      (wrap-defaults site-defaults)
+      (wrap-params)
+      (wrap-logging)
+      #_(logger/wrap-with-logger)))
 
 #_(defonce server (run-jetty #'app {:port 8080 :join? false}))
 

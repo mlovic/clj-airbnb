@@ -30,6 +30,9 @@
                                   ["alert" "_id"])]
       {:id (:_id alert-map) :freq (:freq (:alert alert-map))}))
   
-  (defn add "doc-string" [arg-list]
+  (defn add 
+    "Highest (business) level fn. Add new alert to system" 
+    [alert, sched]
+    ;(exist)
     ))
       ;(->Alert (:id alert-map) (:freq (:alert alert-map))))))

@@ -8,11 +8,9 @@
              [clj-airbnb.change   :as ch]
              [clj-airbnb.airbnb   :as airbnb]
              [clj-airbnb.listing  :as li]
-             [clj-airbnb.web      :as web]
              [clj-airbnb.alert    :as alert]
              [clojure.stacktrace]
-             [clj-airbnb.schedule :as sched])
-  (:gen-class))
+             [clj-airbnb.schedule :as sched]))
 
 #_(Thread/setDefaultUncaughtExceptionHandler
   (reify
@@ -38,12 +36,15 @@
     (li/get-oldest 3)
     ))
 
+(defonce alert-queue (atom (sched/gen-update-schedule (alert/get-all))))
+
 (defn update-listing "doc-string" 
   [id, c] ; TODO optional channel
   (println "updating listing " id)
   (let [old     (:calendar (li/get! id))
         nu      (airbnb/request-calendar id)
         ;new-days (difference (map :date old) (map :date nu));(find-new-days old nu)
+        ;; TODO push more of functionality below to change ns
         changes (->> (cal/find-changes old nu)
                      (map #(assoc % :id id))
                      (map #(assoc % :change_seen (java.util.Date.))))]
@@ -90,17 +91,12 @@
                               :calendar calendar 
                               :last_updated (java.util.Date.)})))))
 
- ; "Load all alerts from db into queue for first time."
-(defonce alert-queue (atom (sched/gen-update-schedule (alert/get-all)))) ; def'ing only to make monitoring easier
+(defn add-alert 
+  "Highest (business) level fn. Add new alert to system" 
+  [alert]
+  (println "Adding new alert " alert)
+  (when-let [listing (-> alert :id li/get)] ; need iflet?
+    (add-listing (:id listing)))
+  (alert/persist alert) ; TODO consider if alert already exists
+  (sched/add-alert-to-queue alert-queue alert))
 
-(defn start 
-  "Start all processes" 
-  []
-  (println "Starting all processes")
-  (-> alert-queue ; returns atom of alerts to monitor
-      (sched/start-scheduling) ; returns out channel of id's to update
-      (listen-updates))  ; updates listings and processes changes
-  (web/start-server))    ; start web server
-
-(defn -main []
-  (start))

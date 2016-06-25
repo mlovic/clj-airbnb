@@ -3,5 +3,12 @@
 Email notification
 Users
 
+POST should add alert
+ - add to db
+ - add to sched
+ - add listing if not there
+
 spec
 replace printlns with logging
+
+Would it be possible to have extension scrape airbnb?
