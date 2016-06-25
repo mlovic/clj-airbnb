@@ -8,4 +8,3 @@
   (async/go-loop [out_num 1] 
                  (println "changes_out:" out_num ": " (<! c))
                  (recur (inc out_num))))
-

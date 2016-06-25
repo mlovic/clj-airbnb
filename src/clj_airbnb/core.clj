@@ -32,24 +32,6 @@
     (uncaughtException [this thread throwable]
       (errorf throwable "Uncaught exception %s on thread %s" throwable thread))))
 
-(defn log-buffer [label in]
-  (go
-    (let [item (<! in)]
-      (item)
-      )))
-
-(comment
-  (doseq [l ( li/query {:last_updated nil})]
-    (do 
-      (update-listing (:_id l) change-chan)
-      (Thread/sleep 1000)))
-   
-  (defn update-oldest 
-    "Updates the n listings with the oldest last_updated time" 
-    [n]
-    (li/get-oldest 3)
-    ))
-
 (defonce alert-queue (atom (sched/gen-update-schedule (alert/get-all))))
 
 (defn update-listing "doc-string" 
