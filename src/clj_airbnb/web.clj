@@ -13,13 +13,17 @@
             [clj-airbnb.core :as core]
             [clj-airbnb.listing :as li]))
 
+;(str (boolean (alert/get-by-listing-id (Integer. ))))
+
 (defroutes app-routes
   (GET "/" [id]
        (println id)
+       (println "RESPONSE: " (str (boolean (alert/get-by-listing-id (Integer. id)))))
        (str (boolean (alert/get-by-listing-id (Integer. id)))))
 
   (POST "/" [id]
-        (core/add-alert  {:freq 60 :id id}))
+        (core/add-alert  {:freq 60 :id id})
+        "ok")
 
   (GET "/dash" [] 
        (join "<br>" (map li/summarize (li/get-all))
@@ -35,7 +39,7 @@
 
 (def app
   (-> app-routes 
-      (wrap-defaults site-defaults)
+      (wrap-defaults (assoc-in site-defaults [:security :anti-forgery] false))
       (wrap-params)
       (wrap-logging)
       #_(logger/wrap-with-logger)))
