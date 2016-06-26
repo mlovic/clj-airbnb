@@ -8,7 +8,7 @@
 (defn sched-entry 
   "Converts an alert to an alert schedule entry (size 2 vector of key and val)." 
   [alert]
-  (let [entry-key (:id alert)
+  (let [entry-key (Integer. (:id alert))
         entry-val (assoc (dissoc alert :id) :next-time (t/now))]
     [entry-key entry-val]))
 
@@ -22,6 +22,7 @@
   "Add an alert to the atom" 
   [sched alert]
   (swap! sched conj (sched-entry alert)))
+;; TODO can't make integer a string
 
 (defn update-next-time 
   "Update next-time of single entry in schedule"

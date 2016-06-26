@@ -73,6 +73,7 @@
                               :calendar calendar 
                               :last_updated (java.util.Date.)})))))
 
+(type (key ( first @alert-queue)))
 (defn add-alert 
   "Highest (business) level fn. Add new alert to system" 
   [alert]
