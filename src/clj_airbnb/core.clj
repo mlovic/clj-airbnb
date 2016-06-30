@@ -10,7 +10,8 @@
              [clj-airbnb.listing  :as li]
              [clj-airbnb.alert    :as alert]
              [clojure.stacktrace]
-             [clj-airbnb.schedule :as sched]))
+             [clj-airbnb.schedule :as sched]
+             [clojure.tools.logging :as log]))
 
 #_(Thread/setDefaultUncaughtExceptionHandler
   (reify

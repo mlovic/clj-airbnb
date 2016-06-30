@@ -11,7 +11,7 @@
                  [ring/ring-defaults "0.1.5"]
                  [compojure "1.4.0"]
                  [clj-time "0.12.0"]
-                 ;[ring.middleware.logger "0.5.0"] ; need?
+                 [ring.middleware.logger "0.5.0"] ; need?
                  [com.draines/postal "2.0.0"]
                  [com.novemberain/monger "3.0.1"]]
   :main ^:skip-aot clj-airbnb.init

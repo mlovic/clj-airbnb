@@ -16,3 +16,4 @@ listings.json
 requests.log
 *.bak
 *.png
+/log
