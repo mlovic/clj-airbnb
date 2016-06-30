@@ -2,12 +2,14 @@
   (:require [monger.core :as monger]
             [monger.collection :as mc]
             [monger.operators :refer [$set $bit]]
-            [clj-airbnb.calendar :as cal])
+            [clj-airbnb.calendar :as cal]
+            [clojure.tools.logging :as log])
   (:import [com.mongodb MongoOptions ServerAddress])
   (:import org.bson.types.ObjectId))
 
 (declare summarize)
 
+monger/connect
 (let [conn (monger/connect)
       db   (monger/get-db conn "clj-airbnb")
       table "listing"]
@@ -46,7 +48,7 @@
   (defn update-calendar 
     "replaces the calendar for a listing in the db" 
     [id cal]
-    (println "Updating calendar for " id)
+    (log/debug "Updating calendar for " id)
     (mc/update-by-id db table id {$set { :calendar cal :last_updated (java.util.Date.)}})
     (summarize (get id)))
 
@@ -56,7 +58,7 @@
     (let [day (nth (:calendar (mc/find-map-by-id db table id)) n)
           date (:date day)
           currnt (cal/available? day)]
-      (println (str "flipped date: " date " to " currnt))
+      (log/info (str "flipped date: " date " to " currnt))
       (mc/update-by-id db table id
                      {$set { (str "calendar." n ".available") (not currnt)}}))))
 

@@ -1,5 +1,6 @@
 (ns clj-airbnb.calendar
-  (:require clojure.set))
+  (:require clojure.set
+            [clojure.tools.logging :as log]))
 
 (defn available? [day] (:available day))
 
@@ -38,8 +39,8 @@
 (defn find-changes
   "return seq of changes between two calendars"
   [old-cal new-cal] ; should id be here?
-  (println "num old dates: " (count old-cal) " | num new dates: " (count new-cal))
-  (println "going to compare " (count (common-dates old-cal new-cal)) " dates")
+  (log/debug "num old dates: " (count old-cal) " | num new dates: " (count new-cal))
+  (log/debug "going to compare " (count (common-dates old-cal new-cal)) " dates")
   (->> 
     ;; TODO deal with new dates
     (for [date (common-dates old-cal new-cal)]

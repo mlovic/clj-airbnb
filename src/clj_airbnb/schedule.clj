@@ -1,6 +1,7 @@
 (ns clj-airbnb.schedule
   (:require [clj-time.core :as t]
-            [clojure.core.async :refer [>! go chan]]))
+            [clojure.core.async :refer [>! go chan]]
+            [clojure.tools.logging :as log]))
 
 ;; TODO do i need alert as dependency? maybe just pass in. Who should have
 ;; knowledge of alert->entry?
@@ -27,7 +28,7 @@
 (defn update-next-time 
   "Update next-time of single entry in schedule"
   [entry]
-  (println "updating time for map: " entry)
+  (log/debug "updating time for map: " entry)
   (assoc entry :next-time (-> (:freq entry) (t/minutes) (t/from-now))))
 
 (defn call-every-minute [callback] 
@@ -36,12 +37,12 @@
 (defn fire-scheduled 
   "iterates through alert queue and puts due alerts on update chan" 
   [queue out-chan]
-  (println "Checking alerts...")
+  (log/debug "Checking alerts...")
   (doseq [[id alert] @queue]
     (when (t/after? (t/now) (:next-time alert))
-      (println "alert due!  " alert)
+      (log/debug "alert due!  " alert)
       (go 
-        (println "putting id " id " on channel...")
+        (log/debug "putting id " id " on channel...")
         (>! out-chan id)
         (swap! queue update-in [id] update-next-time)))
           ))

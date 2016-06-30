@@ -4,7 +4,9 @@
              :refer [>! <! >!! <!! go chan buffer close! thread
                      alts! alts!! timeout]])
   (:require [monger.core :as monger]
-            [monger.collection :as mc])
+            [monger.collection :as mc]
+            [clojure.tools.logging :as log])
+
   (:import [com.mongodb MongoOptions ServerAddress])
 )
 
@@ -23,7 +25,7 @@
 (defn listen-changes [c]
   (async/go-loop [out_num 1] 
                  (when-let [msg (<! c)]
-                   (println "persisting change: " msg)
+                   (log/debug "persisting change: " msg)
                    ;; TODO add timestamp
                    (persist msg)
                    (recur (inc out_num)))))

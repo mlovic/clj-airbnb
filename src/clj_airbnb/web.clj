@@ -11,15 +11,17 @@
             [ring.util.response :refer :all]
             [clj-airbnb.alert :as alert]
             [clj-airbnb.core :as core]
-            [clj-airbnb.listing :as li]))
+            [clj-airbnb.listing :as li]
+            [clojure.tools.logging :as log]))
 
 (defroutes app-routes
   (GET "/" [id]
-       (println id)
-       (println "RESPONSE: " (str (boolean (alert/get-by-listing-id (Integer. id)))))
+       #_(log/debug id)
+       (log/debug "RESPONSE: " (str (boolean (alert/get-by-listing-id (Integer. id)))))
        (str (boolean (alert/get-by-listing-id (Integer. id)))))
 
   (POST "/" [id]
+        ;; TODO do not add alert if already exists
         (core/add-alert  {:freq 60 :id id})
         "ok")
 
@@ -30,9 +32,9 @@
 (defn wrap-logging [handler]
   (fn [request]
     (clojure.pprint/pprint request)
-    (println (str (:request-method request)) " "
-             (str (:uri request))
-             (str (:id (:params request))))
+    (log/info (str (:request-method request)) " "
+              (str (:uri request))
+              (str (:id (:params request))))
     (handler request)))
 
 (def app

@@ -23,7 +23,7 @@
 
 (defn update-listing "doc-string" 
   [id, c] ; TODO optional channel
-  (println "updating listing " id)
+  (log/info "Updating listing " id)
   (let [old     (:calendar (li/get! id))
         nu      (airbnb/request-calendar id)
         ;new-days (difference (map :date old) (map :date nu));(find-new-days old nu)
@@ -31,19 +31,19 @@
         changes (->> (cal/find-changes old nu)
                      (map #(assoc % :id id))
                      (map #(assoc % :change_seen (java.util.Date.))))]
-    (println "number of changes: " (count changes))
+    (log/debug "Number of changes: " (count changes))
     (if (> (count changes) 0)
       (do 
         (go (doseq [change changes] 
               #_(>! c change) ;TODO get rid of channels
-              (println "persisting change: " change)
+              (log/debug "persisting change: " change)
               (ch/persist change)))
         (li/update-calendar id nu))
       (do
         (if (cal/new-days? old nu)
           (li/update-calendar id nu)
           (li/touch id))
-        (println "No changes for " id)))))
+        (log/debug "No changes for " id)))))
 
 (defn listen-updates 
   [c]
@@ -67,7 +67,7 @@
   "Add listing to database (with info and calendar) if not already present."
   [id]
   (if (li/get id)
-    (println "Listing is already in database")
+    (log/info "Listing is already in database")
     (let [info    (airbnb/request-listing-info id) ; wanted fields defd in airbnb ns
           calendar (airbnb/request-calendar id)]
       (li/insert (merge info {:_id id 
@@ -78,7 +78,7 @@
 (defn add-alert 
   "Highest (business) level fn. Add new alert to system" 
   [alert]
-  (println "Adding new alert " alert)
+  (log/info "Adding new alert " alert)
   (when-let [listing (-> alert :id li/get)] ; need iflet?
     (add-listing (:id listing)))
   (alert/persist alert) ; TODO consider if alert already exists

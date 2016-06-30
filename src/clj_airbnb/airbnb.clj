@@ -1,6 +1,7 @@
 (ns clj-airbnb.airbnb
-  (:require [cheshire.core :refer :all])
-  (:require [clj-http.client :as client]))
+  (:require [cheshire.core :refer :all]
+            [clj-http.client :as client]
+            [clojure.tools.logging :as log]))
 
 (defn log-request "doc-string" []
   (spit "requests.log" (str (java.util.Date.) "\n") :append true))
@@ -14,7 +15,7 @@
 (defn request-calendar 
   "HTTP request for calendar of given listing" 
   [id]
-  (println "Sending request..." id)
+  (log/info "Sending request..." id)
   ;; TODO set starting month dynamically
   (try
     (->
@@ -24,7 +25,7 @@
       (:body);; handle exception here
       (parse-string true)
       (get-calendar))
-    (finally (println "Received response")
+    (finally (log/debug "Received response")
              (log-request)))
   )
 
@@ -37,7 +38,7 @@
 (defn request-listing-info
   "HTTP request for listing info" 
   [id]
-  (println "Sending request...")
+  (log/info "Sending request...")
   (try
     (->
       (str "https://api.airbnb.com/v2/listings/" id "?client_id=3092nxybyb0otqw18e8nh5nty&_format=v1_legacy_for_p3")
