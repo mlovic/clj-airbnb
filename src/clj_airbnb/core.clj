@@ -1,17 +1,18 @@
 (ns clj-airbnb.core
   (:require [clojure.core.async
-              :as async
-              :refer [>! <! >!! <!! go go-loop chan buffer close! thread
-                      alts! alts!!]]
-             [clj-airbnb.util                 :refer :all]
-             [clj-airbnb.calendar :as cal]
-             [clj-airbnb.change   :as ch]
-             [clj-airbnb.airbnb   :as airbnb]
-             [clj-airbnb.listing  :as li]
-             [clj-airbnb.alert    :as alert]
-             [clojure.stacktrace]
-             [clj-airbnb.schedule :as sched]
-             [clojure.tools.logging :as log]))
+             :as async
+             :refer [>! <! >!! <!! go go-loop chan buffer close! thread
+                     alts! alts!!]]
+            [clj-airbnb.util                 :refer :all]
+            [clj-airbnb.calendar :as cal]
+            [clj-airbnb.change   :as ch]
+            [clj-airbnb.airbnb   :as airbnb]
+            [clj-airbnb.listing  :as li]
+            [clj-airbnb.alert    :as alert]
+            [clojure.stacktrace]
+            [clj-airbnb.schedule :as sched]
+            [clojure.tools.logging :as log]
+            [clj-airbnb.notify :as notify]))
 
 #_(Thread/setDefaultUncaughtExceptionHandler
   (reify
@@ -34,6 +35,7 @@
     (log/info "Found " (count changes) " changes for " id )
     (if (> (count changes) 0)
       (do 
+        (notify/notify! changes) ;; TODO careful with this!!
         (go (doseq [change changes] 
               #_(>! c change) ;TODO get rid of channels
               (log/debug "persisting change: " change)
