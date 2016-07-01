@@ -7,7 +7,7 @@
             [ring.adapter.jetty :refer :all]
             [ring.middleware.params :refer :all]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
-            [ring.middleware.logger :as logger]
+            [ring.middleware.logger :refer [wrap-with-logger]]
             [ring.util.response :refer :all]
             [clj-airbnb.alert :as alert]
             [clj-airbnb.core :as core]
@@ -41,8 +41,8 @@
   (-> app-routes 
       (wrap-defaults (assoc-in site-defaults [:security :anti-forgery] false))
       (wrap-params)
-      (wrap-logging)
-      (logger/wrap-with-logger)))
+      #_(wrap-logging)
+      (wrap-with-logger)))
 
 #_(defonce server (run-jetty #'app {:port 8080 :join? false}))
 
