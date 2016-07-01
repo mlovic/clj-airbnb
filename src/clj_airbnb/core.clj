@@ -35,6 +35,7 @@
     (log/info "Found " (count changes) " changes for " id )
     (if (> (count changes) 0)
       (do 
+        (log/info "Sending email for changes in " id)
         (notify/notify! changes) ;; TODO careful with this!!
         (go (doseq [change changes] 
               #_(>! c change) ;TODO get rid of channels
