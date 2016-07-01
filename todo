@@ -12,8 +12,10 @@ POST should add alert
 monitor to ensure changes make sense. 
 single db connection
 spec
-replace printlns with logging
+-/- replace printlns with logging
 check db last-updated when starting up schedule. Maybe even use instead of sched. At least sched is a in-memory cache.
 solve german domain
+monitor num requests being made
+monitor num emails being sent
 
-Would it be possible to have extension scrape airbnb?
+Would it be possible to have extension query airbnb and send result to backend?

@@ -16,9 +16,11 @@
 
 (defroutes app-routes
   (GET "/" [id]
-       #_(log/debug id)
-       (log/debug "RESPONSE: " (str (boolean (alert/get-by-listing-id (Integer. id)))))
-       (str (boolean (alert/get-by-listing-id (Integer. id)))))
+       (if id
+         (do
+           (log/debug "RESPONSE: " (str (boolean (alert/get-by-listing-id (Integer. id)))))
+           (str (boolean (alert/get-by-listing-id (Integer. id)))))
+         (redirect "/dash")))
 
   (POST "/" [id]
         ;; TODO do not add alert if already exists
