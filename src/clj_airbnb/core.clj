@@ -31,7 +31,7 @@
         changes (->> (cal/find-changes old nu)
                      (map #(assoc % :id id))
                      (map #(assoc % :change_seen (java.util.Date.))))]
-    (log/debug "Number of changes: " (count changes))
+    (log/info "Found " (count changes) " changes for " id )
     (if (> (count changes) 0)
       (do 
         (go (doseq [change changes] 
@@ -66,8 +66,9 @@
 (defn add-listing 
   "Add listing to database (with info and calendar) if not already present."
   [id]
+  (log/info "Adding listing " id)
   (if (li/get id)
-    (log/info "Listing is already in database")
+    (log/info "Listing is already in database!")
     (let [info    (airbnb/request-listing-info id) ; wanted fields defd in airbnb ns
           calendar (airbnb/request-calendar id)]
       (li/insert (merge info {:_id id 
@@ -78,9 +79,13 @@
 (defn add-alert 
   "Highest (business) level fn. Add new alert to system" 
   [alert]
-  (log/info "Adding new alert " alert)
-  (when-let [listing (-> alert :id li/get)] ; need iflet?
-    (add-listing (:id listing)))
-  (alert/persist alert) ; TODO consider if alert already exists
-  (sched/add-alert-to-queue alert-queue alert))
+  (if (alert/get-by-listing-id (:id alert)); get id in destructuring?
+    (log/error "Trying to add alert which already exists!")
+    (do 
+      (log/info "Adding new alert: " alert)
+      ;; Add listing if necessary
+      (when-not (li/get (:id alert)) ; need if-let?
+        (add-listing (:id alert)))
+      (alert/persist alert) ; TODO consider if alert already exists
+      (sched/add-alert-to-queue alert-queue alert))))
 
