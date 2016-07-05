@@ -2,6 +2,7 @@
   (:require [monger.core :as monger]
             [monger.collection :as mc]
             [monger.operators :refer [$set $bit]]
+            [environ.core :refer [env]]
             [clj-airbnb.calendar :as cal]
             [clojure.tools.logging :as log])
   (:import [com.mongodb MongoOptions ServerAddress])
@@ -11,7 +12,7 @@
 
 ;; TODO need to change coll name "listing" to plural
 (let [conn (monger/connect)
-      db   (monger/get-db conn "clj-airbnb")
+      db   (monger/get-db conn (env :db-name))
       table "listing"]
 
   (defn insert [record]

@@ -5,12 +5,13 @@
                      alts! alts!! timeout]])
   (:require [monger.core :as monger]
             [monger.collection :as mc]
+            [environ.core :refer [env]]
             [clojure.tools.logging :as log])
 
   (:import [com.mongodb MongoOptions ServerAddress]))
-
+(env :db-name)
 (let [conn (monger/connect)
-      db   (monger/get-db conn "clj-airbnb")]
+      db   (monger/get-db conn (env :db-name))]
 
   (defn persist [change]
     (mc/insert db "changes" change))
