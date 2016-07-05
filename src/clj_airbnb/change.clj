@@ -7,8 +7,7 @@
             [monger.collection :as mc]
             [clojure.tools.logging :as log])
 
-  (:import [com.mongodb MongoOptions ServerAddress])
-)
+  (:import [com.mongodb MongoOptions ServerAddress]))
 
 (let [conn (monger/connect)
       db   (monger/get-db conn "clj-airbnb")]

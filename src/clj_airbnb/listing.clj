@@ -9,7 +9,7 @@
 
 (declare summarize)
 
-monger/connect
+;; TODO need to change coll name "listing" to plural
 (let [conn (monger/connect)
       db   (monger/get-db conn "clj-airbnb")
       table "listing"]
@@ -25,16 +25,13 @@ monger/connect
   (defn get-all []
     (mc/find-maps db table))
 
-  ;; could use option map
   (defn get [id]
     (mc/find-map-by-id db table id))
 
+  ;; could use option map for get
   (defn get! [id]
     (or (get id)
         (throw (Exception. (str "Listing not found for id: " id)))))
-
-  ;(defn get-oldest [n]
-    ;mc/)
   
   (defn touch 
     "update :last_updated field for listing" 
@@ -68,23 +65,16 @@ monger/connect
       (:_id listing) ": " (count (:calendar listing)) " days"
       " (" (cal/percent-available (:calendar listing)) " avail.) - "
       (:freq (:alert listing)) " - "
-      (format-time (:last_updated listing))
-      ))
+      (format-time (:last_updated listing))))
 
 (defn summarize-all []
   (doseq [summary (map summarize (get-all))]
     (println summary)))
 
-;; TODO override println to not print cal
-;; need to change to plural
-
-(def db (monger/get-db (monger/connect) "clj-airbnb"))
-(def table "listing")
-
-;; TODO look into eliminating / as word character. Open issue for sexp?
-
 (comment
 
+  (def db (monger/get-db (monger/connect) "clj-airbnb"))
+  (def table "listing")
   (summarize-all)
   (nth (:calendar (mc/find-map-by-id db table 9850900)) 0)
 
@@ -103,5 +93,4 @@ monger/connect
   (doseq [oid (remove integer? (map :_id ( get-all)))]
     (mc/remove-by-id db "listing" oid))
   (count (map :id ( get-all))))
- ;(doseq [l (get-all)] (clj-airbnb.store/summarize-listing l))
 

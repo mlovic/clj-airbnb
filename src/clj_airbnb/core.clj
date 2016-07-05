@@ -3,7 +3,6 @@
              :as async
              :refer [>! <! >!! <!! go go-loop chan buffer close! thread
                      alts! alts!!]]
-            [clj-airbnb.util                 :refer :all]
             [clj-airbnb.calendar :as cal]
             [clj-airbnb.change   :as ch]
             [clj-airbnb.airbnb   :as airbnb]
@@ -22,6 +21,7 @@
 
 (defonce alert-queue (atom (sched/gen-update-schedule (alert/get-all))))
 
+;; TODO Does too much: get cal from db, request cal, find changes, build changes, send notification, persist changes, persist new cal, 
 (defn update-listing "doc-string" 
   [id, c] ; TODO optional channel
   (log/info "Updating listing " id)
@@ -78,7 +78,6 @@
                               :calendar calendar 
                               :last_updated (java.util.Date.)})))))
 
-(type (key ( first @alert-queue)))
 (defn add-alert 
   "Highest (business) level fn. Add new alert to system" 
   [alert]

@@ -4,20 +4,20 @@
             [clj-time.core :as t]
             [clojure.tools.logging :as log]))
 
+;; TODO should probably use same channel for all logging
 (defn log-request "doc-string" []
   (spit "requests.log" (str (java.util.Date.) "\n") :append true))
+
+(defn- current-month 
+  "Return an integer representing the current month." 
+  []
+  (t/month (t/now)))
 
 (defn get-calendar [response]
   (reduce 
     (fn [accum, month] (into accum (:days month))) 
     []
     (:calendar_months response)))
-
-(defn current-month 
-  "Return an integer representing the current month." 
-  []
-  (t/month (t/now))
-  )
 
 (defn request-calendar 
   "HTTP request for calendar of given listing" 
