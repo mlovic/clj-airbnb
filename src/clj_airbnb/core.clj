@@ -4,7 +4,7 @@
              :refer [>! <! >!! <!! go go-loop chan buffer close! thread
                      alts! alts!!]]
             [clj-airbnb.calendar :as cal]
-            ;[clj-airbnb.change   :as ch]
+            [clj-airbnb.change   :as change]
             [clj-airbnb.airbnb   :as airbnb]
             [clj-airbnb.listing  :as li]
             [clj-airbnb.alert    :as alert]
@@ -26,7 +26,7 @@
 (defn update-listing "doc-string" 
   [id, c] ; TODO optional channel
   (log/info "Updating listing " id)
-  (let [old     (:calendar (li/get! id))
+  (let [old     (:calendar (store/get-listing! id))
         nu      (airbnb/request-calendar id)
         ;new-days (difference (map :date old) (map :date nu));(find-new-days old nu)
         ;; TODO push more of functionality below to change ns
@@ -41,13 +41,13 @@
         (go (doseq [change changes] 
               #_(>! c change) ;TODO get rid of channels
               (log/debug "persisting change: " change)
-              (store/persist (ch/map->Change change))))
-        (li/update-calendar id nu)
+              (store/persist (change/map->Change change))))
+        (store/update-calendar id nu)
         )
       (do
         (if (cal/new-days? old nu)
-          (li/update-calendar id nu)
-          (li/touch id))
+          (store/update-calendar id nu)
+          (store/touch-listing id))
         (log/debug "No changes for " id)))))
 
 (defn listen-updates 
@@ -65,7 +65,7 @@
   (let [update-queue (chan)]
     (-> update-queue (listen-updates) (ch/listen-changes))
     (go
-      (doseq [listing (li/get-all)]
+      (doseq [listing (store/get-all-listings)]
         (>!! update-queue (:_id listing))))))
 
 ;; TODO deal with fully qualified and ctags
@@ -73,7 +73,7 @@
   "Add listing to database (with info and calendar) if not already present."
   [id]
   (log/info "Adding listing " id)
-  (if (li/get id)
+  (if (store/get-listing id)
     (log/info "Listing is already in database!")
     (let [info    (airbnb/request-listing-info id) ; wanted fields defd in airbnb ns
           calendar (airbnb/request-calendar id)]
@@ -87,7 +87,7 @@
     (do 
       (log/info "Adding new alert: " alert)
       ;; Add listing if necessary
-      (when-not (li/get (:id alert)) ; need if-let?
+      (when-not (store/get-listing (:id alert)) ; need if-let?
         (add-listing (:id alert)))
       (alert/persist alert) ; TODO consider if alert already exists
       (sched/add-alert-to-queue alert-queue alert))))

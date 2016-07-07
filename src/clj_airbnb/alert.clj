@@ -4,6 +4,7 @@
             [monger.operators :refer [$exists $set]]
             [environ.core :refer [env]]
             [clj-airbnb.listing :as li]
+            [clj-airbnb.datastore :as store]
             [clj-time.core :as t])
   (:import [com.mongodb MongoOptions ServerAddress]))
  
@@ -17,7 +18,7 @@
     "Get alert from db by its listing id. Return nil if either alert 
     or listing don't exist"
     [id]
-    (when-let [listing (li/get id)]
+    (when-let [listing (store/get-listing id)]
       (assoc (:alert listing) :id id)))
 
   (defn persist 

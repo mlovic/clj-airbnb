@@ -11,6 +11,7 @@
             [ring.util.response :refer :all]
             [clj-airbnb.alert :as alert]
             [clj-airbnb.core :as core]
+            [clj-airbnb.datastore :as store]
             [clj-airbnb.listing :as li]
             [clojure.tools.logging :as log]))
 
@@ -28,7 +29,7 @@
         "ok")
 
   (GET "/dash" [] 
-       (join "<br>" (map li/summarize (li/get-all))
+       (join "<br>" (map li/summarize (store/get-all-listings))
              )))
 
 (defn wrap-logging [handler]
