@@ -10,13 +10,19 @@
 
 (declare summarize)
 
+(defrecord Listing [id calendar last_updated city price name min_nights property_type])
+
+(defn make-listing 
+  "Construct a listing record" 
+  [id cal info]
+  (map->Listing
+    (merge info {:_id id 
+                 :calendar cal})))
+
 ;; TODO need to change coll name "listing" to plural
 (let [conn (monger/connect)
       db   (monger/get-db conn (env :db-name))
       table "listing"]
-
-  (defn insert [record]
-    (mc/insert db table record))
   
   (defn query 
     "use monger.coll/find-maps to query db for given map" 

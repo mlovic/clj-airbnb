@@ -8,6 +8,7 @@
             [clj-airbnb.airbnb   :as airbnb]
             [clj-airbnb.listing  :as li]
             [clj-airbnb.alert    :as alert]
+            [clj-airbnb.datastore :as store]
             [clojure.stacktrace]
             [clj-airbnb.schedule :as sched]
             [clojure.tools.logging :as log]
@@ -74,9 +75,7 @@
     (log/info "Listing is already in database!")
     (let [info    (airbnb/request-listing-info id) ; wanted fields defd in airbnb ns
           calendar (airbnb/request-calendar id)]
-      (li/insert (merge info {:_id id 
-                              :calendar calendar 
-                              :last_updated (java.util.Date.)})))))
+      (store/persist (li/make-listing id calendar info)))))
 
 (defn add-alert 
   "Highest (business) level fn. Add new alert to system" 
