@@ -16,8 +16,8 @@
   (GET "/" [id]
        (if id
          (do
-           (log/debug "RESPONSE: " (str (boolean (alert/get-by-listing-id (Integer. id)))))
-           (str (boolean (alert/get-by-listing-id (Integer. id)))))
+           (log/debug "RESPONSE: " (str (boolean (store/get-alert-by-listing-id (Integer. id)))))
+           (str (boolean (store/get-alert-by-listing-id (Integer. id)))))
          (redirect "/dash")))
 
   (POST "/" [id]

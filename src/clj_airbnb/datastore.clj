@@ -1,15 +1,16 @@
 (ns clj-airbnb.datastore
   (:require [monger.core :as mg]
             [monger.collection :as mc]
-            [monger.operators :refer [$set $bit]]
+            [monger.operators :refer [$exists $set $bit]]
             [environ.core :refer [env]]
             [clj-airbnb.listing :as li]
             [clj-airbnb.change :as change]
             [clojure.tools.logging :as log]
-            ;[clj-airbnb.alert :as alert]
+            [clj-airbnb.alert :as alert]
             )
   (:import [clj_airbnb.listing Listing]
            [clj_airbnb.change  Change]
+           [clj_airbnb.alert   Alert]
            )
   (:import [com.mongodb MongoOptions ServerAddress])
   (:import org.bson.types.ObjectId))
@@ -29,10 +30,16 @@
   Change
   (persist [change]
     (log/debug "Persisting change to db: " change)
-    (mc/insert db "changes" change)))
-
+    (mc/insert db "changes" change))
+  Alert
+  (persist 
+    [alert]
+    (let [id (:id alert)
+          alert-map (dissoc alert :id)]
+      (mc/update-by-id db "listing" id {$set {:alert alert-map}} ))))
 ;; TODO need to change coll name "listing" to plural
 
+;;; LISTINGS
 (defn get-all-listings []
   (mc/find-maps db "listing"))
 
@@ -56,7 +63,18 @@
   (mc/update-by-id db "listing" id {$set { :calendar cal :last_updated (java.util.Date.)}})
   (li/summarize (get-listing id))) ; TODO get rid of this line
 
+;;; ALERTS
+(defn get-alert-by-listing-id 
+    "Get alert from db by its listing id. Return nil if either alert 
+    or listing don't exist"
+    [id]
+    (when-let [listing (get-listing id)]
+      (assoc (:alert listing) :id id)))
 
+(defn get-all-alerts []
+    (for [alert-map (mc/find-maps db "listing" {:alert {$exists true}} 
+                                  ["alert" "_id"])]
+      {:id (:_id alert-map) :freq (:freq (:alert alert-map))}))
 
 ;;; NOT USED
 (defn get-changes-for-listing [id] 

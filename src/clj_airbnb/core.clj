@@ -20,7 +20,7 @@
     (uncaughtException [this thread throwable]
       (errorf throwable "Uncaught exception %s on thread %s" throwable thread))))
 
-(defonce alert-queue (atom (sched/gen-update-schedule (alert/get-all))))
+(defonce alert-queue (atom (sched/gen-update-schedule (store/get-all-alerts))))
 
 ;; TODO Does too much: get cal from db, request cal, find changes, build changes, send notification, persist changes, persist new cal, 
 (defn update-listing "doc-string" 
@@ -82,13 +82,13 @@
 (defn add-alert 
   "Highest (business) level fn. Add new alert to system" 
   [alert]
-  (if (alert/get-by-listing-id (:id alert)); get id in destructuring?
+  (if (store/get-alert-by-listing-id (:id alert)); get id in destructuring?
     (log/error "Trying to add alert which already exists!")
     (do 
       (log/info "Adding new alert: " alert)
       ;; Add listing if necessary
       (when-not (store/get-listing (:id alert)) ; need if-let?
         (add-listing (:id alert)))
-      (alert/persist alert) ; TODO consider if alert already exists
+      (store/persist (alert/map->Alert alert)) ; TODO consider if alert already exists
       (sched/add-alert-to-queue alert-queue alert))))
 
