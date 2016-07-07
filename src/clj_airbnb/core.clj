@@ -4,7 +4,7 @@
              :refer [>! <! >!! <!! go go-loop chan buffer close! thread
                      alts! alts!!]]
             [clj-airbnb.calendar :as cal]
-            [clj-airbnb.change   :as ch]
+            ;[clj-airbnb.change   :as ch]
             [clj-airbnb.airbnb   :as airbnb]
             [clj-airbnb.listing  :as li]
             [clj-airbnb.alert    :as alert]
@@ -37,12 +37,13 @@
     (if (> (count changes) 0)
       (do 
         (log/info "Sending email for changes in " id)
-        (notify/notify! (doall changes)) ;; TODO careful with this!!
+        ;(notify/notify! (doall changes)) ;; TODO careful with this!!
         (go (doseq [change changes] 
               #_(>! c change) ;TODO get rid of channels
               (log/debug "persisting change: " change)
-              (ch/persist change)))
-        (li/update-calendar id nu))
+              (store/persist (ch/map->Change change))))
+        (li/update-calendar id nu)
+        )
       (do
         (if (cal/new-days? old nu)
           (li/update-calendar id nu)
@@ -57,7 +58,8 @@
              (recur))
     changes)) ; doesn't go-loop  already return channel?
 
-(defn update-all 
+;; Broken I think.
+#_(defn update-all 
   "update all listings in the database" 
   []
   (let [update-queue (chan)]
