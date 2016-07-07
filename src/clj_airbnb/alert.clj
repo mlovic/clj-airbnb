@@ -3,9 +3,7 @@
             [monger.collection :as mc]
             [monger.operators :refer [$exists $set]]
             [environ.core :refer [env]]
-            [clj-airbnb.listing :as li]
-            [clj-airbnb.datastore :as store]
-            [clj-time.core :as t])
+            [clj-airbnb.datastore :as store])
   (:import [com.mongodb MongoOptions ServerAddress]))
  
 ;(defrecord Alert [listing-id freq])

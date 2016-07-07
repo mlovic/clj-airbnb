@@ -1,6 +1,5 @@
 (ns clj-airbnb.listing
-  (:require [clj-airbnb.calendar :as cal]
-            [clojure.tools.logging :as log]))
+  (:require [clj-airbnb.calendar :as cal]))
 
 (defrecord Listing [id calendar last_updated city price name min_nights property_type])
 

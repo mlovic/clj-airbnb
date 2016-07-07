@@ -1,5 +1,5 @@
 (ns clj-airbnb.fixture
-  (:require [clj-airbnb.calendar :as cal]
+  #_(:require [clj-airbnb.calendar :as cal]
             [clj-airbnb.airbnb :as airbnb]))
 
 ;(defn fixture-path 

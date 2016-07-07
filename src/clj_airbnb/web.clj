@@ -1,9 +1,6 @@
 (ns clj-airbnb.web
   (:require [compojure.core :refer :all]
             [clojure.string :refer [join]]
-            [compojure.handler :as handler]
-            [compojure.response :as response]
-            [compojure.route :as route]
             [ring.adapter.jetty :refer :all]
             [ring.middleware.params :refer :all]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]

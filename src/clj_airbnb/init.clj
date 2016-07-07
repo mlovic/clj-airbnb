@@ -1,13 +1,9 @@
 (ns clj-airbnb.init
-  (:require [clojure.core.async
-             :as async
-             :refer [>! <! >!! <!! go go-loop chan buffer close! thread
-                     alts! alts!!]]
-            [clj-airbnb.core     :as core]
-            [clj-airbnb.web      :as web]
-            [clj-airbnb.alert    :as alert]
-            [clj-airbnb.schedule :as sched]
-            [clojure.tools.logging :as log])
+  (:require
+    [clj-airbnb.core     :as core]
+    [clj-airbnb.web      :as web]
+    [clj-airbnb.schedule :as sched]
+    [clojure.tools.logging :as log])
   (:gen-class))
 
  ; "Load all alerts from db into queue for first time."
