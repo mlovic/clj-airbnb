@@ -22,7 +22,7 @@
 
   (POST "/" [id]
         ;; TODO do not add alert if already exists
-        (core/add-alert  {:freq 60 :id id})
+        (core/add-alert  {:freq 60 :id (Integer. id)})
         "ok")
 
   (GET "/dash" [] 
