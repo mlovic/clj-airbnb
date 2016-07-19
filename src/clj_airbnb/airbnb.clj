@@ -55,3 +55,28 @@
       (get-info))
     (finally (println "Received response")
              (log-request))))
+
+(defn search-listings 
+  "HTTP request to search for listings" 
+  [location price-min price-max limit]
+  (log/info "Sending request...")
+  (try
+    (->
+      "https://api.airbnb.com/v2/search_results?client_id=3092nxybyb0otqw18e8nh5nty"
+      (doto log/info)
+      (client/get  
+        {:query-params {"locale" "en-US"
+                        "currency" "EUR" 
+                        "_format" "for_search_results_with_minimal_pricing"
+                        "sort" 1
+                        "guests" 3
+                        "room_types[]" "Entire home/apt"
+                        "location" location
+                        "price_max" price-max
+                        "price_min" price-min
+                        "_limit" limit
+                        }})
+      (:body)
+      (parse-string true))
+    (finally (println "Received response")
+             (log-request))))
