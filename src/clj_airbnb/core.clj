@@ -52,8 +52,12 @@
 
 (defn listen-updates 
   [c]
-  (let [changes (chan)]
-    (go-loop [] (update-listing (<! c) changes) 
+  (let [changes (chan)
+        updated (chan)]
+    (go-loop [] 
+             (let [id (<! c)]
+               (update-listing id changes) 
+               (swap! alert-queue update-in [id] sched/update-next-time))
              (Thread/sleep 2000) 
              (recur))
     changes)) ; doesn't go-loop  already return channel?
@@ -91,4 +95,3 @@
         (add-listing (:id alert)))
       (store/persist (alert/map->Alert alert)) ; TODO consider if alert already exists
       (sched/add-alert-to-queue alert-queue alert))))
-

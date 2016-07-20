@@ -1,11 +1,12 @@
 (ns clj-airbnb.schedule
   (:require [clj-time.core :as t]
-            [clojure.core.async :refer [>! go chan]]
+            [clojure.core.async :refer [offer! >!! >! go chan]]
             [clojure.tools.logging :as log]))
 
 ;; TODO do i need alert as dependency? maybe just pass in. Who should have
 ;; knowledge of alert->entry?
 
+;; [:id [:freq :next-time]] next-time is nil when alert is on queue
 (defn sched-entry 
   "Converts an alert to an alert schedule entry (size 2 vector of key and val)." 
   [alert]
@@ -39,19 +40,24 @@
   [queue out-chan]
   (log/debug "Checking alerts...")
   (doseq [[id alert] @queue]
+    ;; TODO could have method here for a schedentry object
     (when (t/after? (t/now) (:next-time alert))
-      (log/debug "alert due!  " alert)
-      (go 
-        (log/debug "putting id " id " on channel...")
-        (>! out-chan id)
-        (swap! queue update-in [id] update-next-time)))
-          ))
+      ;; TODO maybe just call update funcgtion instead of using channels.
+      ;; Could then get feedback about it before updating next-time.
+      (log/debug "Alert due! " alert ". Putting on channel..." 
+                 "(" (count (.buf out-chan)) " listings on channel)")
+      (if-not (offer! out-chan id)
+        (log/error "Update channel is full!"))
+      ; make :next-time nil until listen-updates updates it
+      (swap! queue update-in [id] #(assoc % :next-time nil)) ;need the explcit fn?
+      )))
 
 (defn start-scheduling 
   "Starts monitoring the alert queue and putting id's for listngs on the 
   channel that it returns." 
   ([alert-queue]
-     (start-scheduling alert-queue (chan)))
+   ;; Using 
+     (start-scheduling alert-queue (chan 500)))
   ([alert-queue update-queue]
      (call-every-minute #(fire-scheduled alert-queue update-queue))
      update-queue))
