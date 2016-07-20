@@ -7,7 +7,7 @@
   [changes]
   (try
     (let [id (:id (first changes))
-          msg (str "There have been changes: " (doall changes))]
+          msg (str "There have been changes: " changes)]
       (postal/send-message {:host (env :smtp-host)}
                            {:from (env :mail-from) 
                             :to   (env :mail-to) 
