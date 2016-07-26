@@ -50,7 +50,9 @@
         updated (chan)]
     (go-loop [] 
              (let [id (<! c)]
-               (update-listing id changes) 
+               (try (update-listing id changes)
+                 (catch Exception e
+                   (log/error e "Error updating listing " id)))
                (swap! alert-queue update-in [id] sched/update-next-time))
              (Thread/sleep 2000) 
              (recur))
