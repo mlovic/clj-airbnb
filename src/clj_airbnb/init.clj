@@ -9,6 +9,12 @@
  ; "Load all alerts from db into queue for first time."
  ; def'ing only to make monitoring easier
 
+;; log any uncaught exception on any thread. Code from Stuart Sierra's blog.
+(Thread/setDefaultUncaughtExceptionHandler
+ (reify Thread$UncaughtExceptionHandler
+   (uncaughtException [_ thread ex]
+     (log/error ex "Uncaught exception on" (.getName thread)))))
+
 (defn start 
   "Start all processes" 
   []

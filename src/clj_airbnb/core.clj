@@ -14,12 +14,6 @@
             [clojure.tools.logging :as log]
             [clj-airbnb.notify :as notify]))
 
-#_(Thread/setDefaultUncaughtExceptionHandler
-  (reify
-    Thread$UncaughtExceptionHandler
-    (uncaughtException [this thread throwable]
-      (errorf throwable "Uncaught exception %s on thread %s" throwable thread))))
-
 (defonce alert-queue (atom (sched/gen-update-schedule (store/get-all-alerts))))
 
 ;; TODO Does too much: get cal from db, request cal, find changes, build changes, send notification, persist changes, persist new cal, 
