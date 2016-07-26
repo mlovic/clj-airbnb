@@ -34,7 +34,7 @@
         (notify/notify! (into () (doall changes))) ; convert lazyseq to list 
         (go (doseq [change changes] 
               #_(>! c change) ;TODO get rid of channels
-              (log/debug "persisting change: " change)
+              (log/debug "persisting changes...")
               (store/persist (change/map->Change change))))
         (store/update-calendar id nu)
         )
