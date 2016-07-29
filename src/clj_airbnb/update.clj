@@ -3,7 +3,6 @@
             [clj-airbnb.airbnb     :as airbnb]
             [clj-airbnb.listing    :as li]
             [clj-airbnb.datastore  :as store]
-            [clj-airbnb.schedule   :as sched] ; should be removed
             [clojure.tools.logging :as log]
             [clj-airbnb.calendar   :as cal]
             [clj-airbnb.change     :as change]
@@ -38,7 +37,7 @@
         (log/debug "No changes for " id)))))
 
 (defn listen-updates 
-  [c alert-queue]
+  [c callback]
   (let [changes (chan)
         updated (chan)]
     (go-loop [] 
@@ -46,7 +45,8 @@
                (try (update-listing id changes)
                  (catch Exception e
                    (log/error e "Error updating listing " id)))
-               (swap! alert-queue update-in [id] sched/update-next-time))
+               (callback id)
+               )
              (Thread/sleep 2000) 
              (recur))
     changes))
