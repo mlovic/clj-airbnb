@@ -3,6 +3,7 @@
     [clj-airbnb.core     :as core]
     [clj-airbnb.web      :as web]
     [clj-airbnb.schedule :as sched]
+    [clj-airbnb.update   :as update]
     [clojure.tools.logging :as log])
   (:gen-class))
 
@@ -21,7 +22,7 @@
   (log/info "Starting all processes")
   (-> core/alert-queue ; returns atom of alerts to monitor
       (sched/start-scheduling) ; returns out channel of id's to update
-      (core/listen-updates))  ; updates listings and processes changes
+      (update/listen-updates core/alert-queue))  ; updates listings and processes changes
   (web/start-server))    ; start web server
 
 (defn -main []
