@@ -11,6 +11,7 @@
   (:import [clj_airbnb.listing Listing]
            [clj_airbnb.change  Change]
            [clj_airbnb.alert   Alert]
+           [clj_airbnb.alert   SearchAlert]
            )
   (:import [com.mongodb MongoOptions ServerAddress])
   (:import org.bson.types.ObjectId))
@@ -31,6 +32,10 @@
   (persist [change]
     (log/debug "Persisting change to db: " change)
     (mc/insert db "changes" change))
+  SearchAlert
+  (persist [search-alert]
+    (log/debug "Persisting search-alert to db: " search-alert)
+    (mc/insert db "searchAlerts" search-alert))
   Alert
   (persist 
     [alert]
