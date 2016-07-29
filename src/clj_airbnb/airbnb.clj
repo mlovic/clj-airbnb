@@ -56,30 +56,40 @@
     (finally (println "Received response")
              (log-request))))
 
+(defn get-listings 
+  "Extract list of listings from (parsed) response body." 
+  [response-map]
+  (->> response-map 
+       (:search_results)
+       (map :listing)))
+
 (defn search-listings 
   "HTTP request to search for listings" 
-  ([location price-min price-max limit]
-   (search-listings location price-min price-max limit 0))
-  ([location price-min price-max limit offset]
+  ([query] ; right way for opt args?
+   (search-listings query 20 0))
+  ([query limit] 
+   (search-listings query limit 0))
+  ([query limit offset]
    (log/info "Sending request...")
    (try
      (->
        "https://api.airbnb.com/v2/search_results?client_id=3092nxybyb0otqw18e8nh5nty"
-       (doto log/info)
        (client/get  
-         {:query-params {"locale" "en-US"
-                         "currency" "EUR" 
-                         "_format" "for_search_results_with_minimal_pricing"
-                         "sort" 1
-                         "guests" 3
-                         "room_types[]" "Entire home/apt"
-                         "location" location
-                         "price_max" price-max
-                         "price_min" price-min
-                         "_limit" limit
-                         "_offset" offset
-                         }})
+         ;; TODO extract this to build-params fn
+         ;; where to do validation?
+         {:query-params (merge
+                          {"locale" "en-US"
+                           "currency" "EUR" 
+                           "_format" "for_search_results_with_minimal_pricing"
+                           "sort" 1
+                           "_limit" limit
+                           "_offset" offset}
+                          (select-keys query ["guests" "room_types" "price_min" 
+                                              "price_max" "location"]))})
        (:body)
-       (parse-string true))
-     (finally (println "Received response")
+       (parse-string true)
+       (get-listings))
+     (catch Exception e
+       (log/error "Error sending request to airbnb:" e))
+     (finally (log/debug "Received response")
               (log-request)))))
