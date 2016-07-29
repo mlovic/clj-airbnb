@@ -6,6 +6,8 @@
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [ring.middleware.logger :refer [wrap-with-logger]]
             [ring.util.response :refer :all]
+            [ring.util.codec :refer [form-decode]]
+             
             [clj-airbnb.alert :as alert]
             [clj-airbnb.core :as core]
             [clj-airbnb.datastore :as store]
@@ -26,8 +28,15 @@
         "ok")
 
   (GET "/dash" [] 
-       (join "<br>" (map li/summarize (store/get-all-listings))
-             )))
+       (join "<br>" (map li/summarize (store/get-all-listings))))
+
+  (POST "/search-query" [location query_url]
+        (let [search-query (form-decode query_url "UTF-8")] ; right place for decoding?
+          ;(log/debug search-query)
+          (future (core/add-search-alert location search-query))
+          nil)) ;; TODO push async down
+
+  )
 
 (defn wrap-logging [handler]
   (fn [request]
