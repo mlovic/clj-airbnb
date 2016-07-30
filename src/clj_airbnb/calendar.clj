@@ -37,18 +37,17 @@
               (find-by-date new-cal date)))
 
 (defn find-changes
-  "return seq of changes between two calendars"
+  "Return list of changes between two calendars. [{:date x :direction y}...]"
   [old-cal new-cal] ; should id be here?
   (log/debug "num old dates: " (count old-cal) " | num new dates: " (count new-cal))
   (log/debug "going to compare " (count (common-dates old-cal new-cal)) " dates")
   (->> 
-    ;; TODO deal with new dates
-    (for [date (common-dates old-cal new-cal)]
-      {:date date :direction (find-change date old-cal new-cal)})
-    ;( #(doto (sort-by :date %) clojure.pprint/pprint)) 
-    (filter :direction)))
+    (reduce (fn [acc date] 
+              (if-let [direction (find-change date old-cal new-cal)]
+                (conj acc {:date date :direction direction})
+                acc))
+            [] (common-dates old-cal new-cal))))
 
-take
 (defn percent-available
   [calendar]
   ;; TODO Maybe only calculate over next 3 months
